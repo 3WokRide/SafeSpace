@@ -11,12 +11,11 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/gamequizzes")
+@RequestMapping("/gameQuizzes")
 public class GameQuizController {
     private final GameQuizService service;
 
@@ -24,12 +23,12 @@ public class GameQuizController {
         this.service = service;
     }
 
-    @PostMapping("/createGameQuiz")
-    public GameQuizEntity getMethodName(@RequestParam GameQuizEntity gameQuiz) {
+    @PostMapping("/create")
+    public GameQuizEntity getMethodName(@RequestBody GameQuizEntity gameQuiz) {
         return service.createGameQuiz(gameQuiz);
     }
 
-    @GetMapping("/getAllGameQuizzes")
+    @GetMapping("/getAll")
     public List<GameQuizEntity> getAllGameQuizzes() {
         return service.findAll();
     }
@@ -39,7 +38,7 @@ public class GameQuizController {
         return service.findGameQuizById(id);
     }
 
-    @PutMapping("/updateGameQuiz/{id}")
+    @PutMapping("/update/{id}")
     public GameQuizEntity updateGameQuiz(@PathVariable Long id, @RequestBody GameQuizEntity entity) {
         return service.updateGameQuiz(id, entity);
     }

@@ -23,22 +23,22 @@ public class ProgressController {
         this.service = service;
     }
 
-    @PostMapping("/createProgress")
+    @PostMapping("/create")
     public ProgressEntity createProgress(@RequestBody ProgressEntity progress) {
         return service.createProgress(progress);
     }
 
-    @GetMapping("/getAllProgresses")
+    @GetMapping("/getAll")
     public List<ProgressEntity> getAllProgresses() {
         return service.findAllProgress();
     }
 
-    @GetMapping("/getProgress/{id}")
+    @GetMapping("/get/{id}")
     public ProgressEntity getProgressById(@PathVariable Long id) {
         return service.findProgressById(id);
     }
 
-    @PutMapping("/updateProgress/{id}")
+    @PutMapping("/update/{id}")
     public ProgressEntity updateProgress(@PathVariable Long id, @RequestBody ProgressEntity entity) {
         return service.updateProgress(id, entity);
     }
