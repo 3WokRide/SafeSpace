@@ -9,39 +9,39 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userID;
 
-    @Column(length = 32)
+    @Column(length = 32, nullable = false, unique = true)
     private String username;
 
-    @Column(length = 128)
+    @Column(length = 128, nullable = false)
     private String password;
 
-    @Column(length = 128)
+    @Column(length = 128, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 32)
+    @Column(length = 32, nullable = false)
     private String gender;
 
     @Column
     private Integer age;
 
     @Column(length = 32)
-    private String role;
-
-    @Column(length = 32)
     private String privacySettings;
+
+    @Column(nullable = false)
+    private Character userType;
 
     public UserEntity() {
     }
-
-    public UserEntity(String username, String password, String email, String gender, int age, String role,
-            String privacySettings) {
+    
+    public UserEntity(String username, String password, String email, String gender, Integer age,
+            String privacySettings, Character userType) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.gender = gender;
         this.age = age;
-        this.role = role;
         this.privacySettings = privacySettings;
+        this.userType = userType;
     }
 
     public Long getUserID() {
@@ -88,14 +88,6 @@ public class UserEntity {
         this.age = age;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getPrivacySettings() {
         return privacySettings;
     }
@@ -104,4 +96,13 @@ public class UserEntity {
         this.privacySettings = privacySettings;
     }
 
+    public Character getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Character userType) {
+        this.userType = userType;
+    }
+
+    
 }
