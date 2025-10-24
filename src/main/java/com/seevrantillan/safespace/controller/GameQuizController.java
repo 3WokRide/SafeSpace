@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/gameQuizzes")
+@RequestMapping("/api/game-quizzes")
 public class GameQuizController {
     private final GameQuizService service;
 
@@ -23,22 +23,22 @@ public class GameQuizController {
         this.service = service;
     }
 
-    @PostMapping("/create")
-    public GameQuizEntity getMethodName(@RequestBody GameQuizEntity gameQuiz) {
+    @PostMapping
+    public GameQuizEntity createGameQuiz(@RequestBody GameQuizEntity gameQuiz) {
         return service.createGameQuiz(gameQuiz);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping
     public List<GameQuizEntity> getAllGameQuizzes() {
-        return service.findAll();
+        return service.getAll();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public GameQuizEntity getGameQuizById(@PathVariable Long id) {
-        return service.findGameQuizById(id);
+        return service.getGameQuizById(id);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public GameQuizEntity updateGameQuiz(@PathVariable Long id, @RequestBody GameQuizEntity entity) {
         return service.updateGameQuiz(id, entity);
     }

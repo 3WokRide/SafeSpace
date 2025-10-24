@@ -20,23 +20,31 @@ public class CommentService {
         this.repo = repo;
     }
 
-    public CommentEntity saveComment(CommentEntity comment) {
-        // Automatically set the date when saving a new comment
+    public CommentEntity createComment(CommentEntity comment) {
         comment.setDate(LocalDateTime.now());
         return repo.save(comment);
     }
 
-    public CommentEntity updateCommentContent(int commentId, String newContent) {
+    public List<CommentEntity> getAllComments() {
+        return repo.findAll();
+    }
+
+    public CommentEntity getCommentById(long commentId) {
+        return repo.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
+    }
+
+    public CommentEntity updateCommentContent(long commentId, String newContent) {
         CommentEntity existingEntity = repo.findById(commentId)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
 
         existingEntity.setContent(newContent);
         existingEntity.setDate(LocalDateTime.now());
-        
+
         return repo.save(existingEntity);
     }
 
-    public CommentEntity updateVotes(int commentId, int upvotes, int downvotes) {
+    public CommentEntity updateVotes(long commentId, int upvotes, int downvotes) {
         CommentEntity existingEntity = repo.findById(commentId)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
 
@@ -44,21 +52,5 @@ public class CommentService {
         existingEntity.setDownvotes(downvotes);
 
         return repo.save(existingEntity);
-    }
-
-    public List<CommentEntity> getAllComments() {
-        return repo.findAll();
-    }
-
-    public CommentEntity getCommentById(int commentId) {
-        return repo.findById(commentId)
-                .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
-    }
-
-    public void deleteComment(int commentId) {
-        if (!repo.existsById(commentId)) {
-            throw new NoSuchElementException("Comment not found with ID: " + commentId);
-        }
-        repo.deleteById(commentId);
     }
 }

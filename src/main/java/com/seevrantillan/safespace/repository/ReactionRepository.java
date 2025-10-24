@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.seevrantillan.safespace.entity.ReactionEntity;
 
 @Repository
-public interface ReactionRepository extends JpaRepository<ReactionEntity, Integer> {
+public interface ReactionRepository extends JpaRepository<ReactionEntity, Long> {
 }

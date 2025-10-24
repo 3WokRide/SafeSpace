@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import com.seevrantillan.safespace.entity.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Integer> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 }

@@ -19,31 +19,24 @@ public class ReactionService {
         this.repo = repo;
     }
 
-    public ReactionEntity saveReaction(ReactionEntity reaction) {
+    public ReactionEntity createReaction(ReactionEntity reaction) {
         return repo.save(reaction);
-    }
-
-    public ReactionEntity updateReactionType(int reactionId, String newReactionType) {
-        ReactionEntity existingEntity = repo.findById(reactionId)
-                .orElseThrow(() -> new NoSuchElementException("Reaction not found with ID: " + reactionId));
-
-        existingEntity.setReactionType(newReactionType);
-        return repo.save(existingEntity);
     }
 
     public List<ReactionEntity> getAllReactions() {
         return repo.findAll();
     }
 
-    public ReactionEntity getReactionById(int reactionId) {
+    public ReactionEntity getReactionById(long reactionId) {
         return repo.findById(reactionId)
                 .orElseThrow(() -> new NoSuchElementException("Reaction not found with ID: " + reactionId));
     }
 
-    public void deleteReaction(int reactionId) {
-        if (!repo.existsById(reactionId)) {
-            throw new NoSuchElementException("Reaction not found with ID: " + reactionId);
-        }
-        repo.deleteById(reactionId);
+    public ReactionEntity updateReactionType(long reactionId, String newReactionType) {
+        ReactionEntity existingEntity = repo.findById(reactionId)
+                .orElseThrow(() -> new NoSuchElementException("Reaction not found with ID: " + reactionId));
+
+        existingEntity.setReactionType(newReactionType);
+        return repo.save(existingEntity);
     }
 }

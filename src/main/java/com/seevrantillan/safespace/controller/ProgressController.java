@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/progresses")
+@RequestMapping("/api/progress")
 public class ProgressController {
     private final ProgressService service;
 
@@ -23,24 +23,23 @@ public class ProgressController {
         this.service = service;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ProgressEntity createProgress(@RequestBody ProgressEntity progress) {
         return service.createProgress(progress);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping
     public List<ProgressEntity> getAllProgresses() {
-        return service.findAllProgress();
+        return service.getAllProgress();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ProgressEntity getProgressById(@PathVariable Long id) {
-        return service.findProgressById(id);
+        return service.getProgressById(id);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ProgressEntity updateProgress(@PathVariable Long id, @RequestBody ProgressEntity entity) {
         return service.updateProgress(id, entity);
     }
-
 }

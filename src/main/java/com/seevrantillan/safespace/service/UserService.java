@@ -18,7 +18,7 @@ public class UserService {
         this.repo = repo;
     }
 
-    public UserEntity saveUser(UserEntity User) {
+    public UserEntity createUser(UserEntity User) {
         return repo.save(User);
     }
 
@@ -26,8 +26,13 @@ public class UserService {
         return repo.findAll();
     }
 
-    public UserEntity updateUser(int userID, UserEntity userDetails) {
-        UserEntity existingUser = repo.findById(userID).orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userID));
+    public UserEntity getUserById(long userID) {
+        return repo.findById(userID).orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userID));
+    }
+
+    public UserEntity updateUser(long userID, UserEntity userDetails) {
+        UserEntity existingUser = repo.findById(userID)
+                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userID));
 
         existingUser.setUsername(userDetails.getUsername());
         existingUser.setPassword(userDetails.getPassword());
@@ -35,8 +40,7 @@ public class UserService {
         existingUser.setGender(userDetails.getGender());
         existingUser.setAge(userDetails.getAge());
         existingUser.setPrivacySettings(userDetails.getPrivacySettings());
-        
+
         return repo.save(existingUser);
     }
 }
-

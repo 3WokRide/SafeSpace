@@ -26,11 +26,11 @@ public class GameQuizService {
         return repository.save(entity);
     }
 
-    public GameQuizEntity findGameQuizById(Long id) {
+    public GameQuizEntity getGameQuizById(Long id) {
         return repository.findById(id).orElseThrow();
     }
 
-    public List<GameQuizEntity> findAll() {
+    public List<GameQuizEntity> getAll() {
         return repository.findAll();
     }
 

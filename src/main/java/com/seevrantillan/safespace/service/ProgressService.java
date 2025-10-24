@@ -27,16 +27,16 @@ public class ProgressService {
         return repository.save(entity);
     }
 
-    public ProgressEntity findProgressById(Long id) {
+    public ProgressEntity getProgressById(long id) {
         return repository.findById(id).orElseThrow();
     }
 
-    public List<ProgressEntity> findAllProgress() {
+    public List<ProgressEntity> getAllProgress() {
         return repository.findAll();
     }
-
+    
     @Transactional
-    public ProgressEntity updateProgress(Long id, ProgressEntity updatedProgress) {
+    public ProgressEntity updateProgress(long id, ProgressEntity updatedProgress) {
         ProgressEntity existingProgress = repository.findById(id).orElseThrow();
         existingProgress.setScore(updatedProgress.getScore());
         existingProgress.setProgressLevel(updatedProgress.getProgressLevel());

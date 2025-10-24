@@ -2,7 +2,6 @@ package com.seevrantillan.safespace.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,7 @@ import com.seevrantillan.safespace.entity.CommentEntity;
 import com.seevrantillan.safespace.service.CommentService;
 
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentService service;
@@ -25,36 +24,30 @@ public class CommentController {
         this.service = service;
     }
 
-    @PostMapping("/createComment")
+    @PostMapping
     public CommentEntity createComment(@RequestBody CommentEntity commentEntity) {
-        return service.saveComment(commentEntity);
+        return service.createComment(commentEntity);
     }
 
-    @GetMapping("/getAllComments")
+    @GetMapping
     public List<CommentEntity> getAllComments() {
         return service.getAllComments();
     }
 
-    @GetMapping("/getComment/{commentId}")
+    @GetMapping("/{commentId}")
     public CommentEntity getCommentById(@PathVariable int commentId) {
         return service.getCommentById(commentId);
     }
 
-    @PutMapping("/updateCommentContent/{commentId}")
+    @PutMapping("/content/{commentId}")
     public CommentEntity updateCommentContent(@PathVariable int commentId, @RequestBody String newContent) {
         return service.updateCommentContent(commentId, newContent);
     }
 
-    @PutMapping("/updateVotes/{commentId}")
+    @PutMapping("/votes/{commentId}")
     public CommentEntity updateVotes(@PathVariable int commentId, 
                                      @RequestParam int upvotes, 
                                      @RequestParam int downvotes) {
         return service.updateVotes(commentId, upvotes, downvotes);
-    }
-
-    @DeleteMapping("/deleteComment/{commentId}")
-    public String deleteComment(@PathVariable int commentId) {
-        service.deleteComment(commentId);
-        return "Comment with ID " + commentId + " has been deleted successfully.";
     }
 }

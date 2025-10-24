@@ -2,7 +2,6 @@ package com.seevrantillan.safespace.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,7 @@ import com.seevrantillan.safespace.entity.ReactionEntity;
 import com.seevrantillan.safespace.service.ReactionService;
 
 @RestController
-@RequestMapping("/reactions")
+@RequestMapping("/api/reactions")
 public class ReactionController {
 
     private final ReactionService service;
@@ -24,29 +23,23 @@ public class ReactionController {
         this.service = service;
     }
 
-    @PostMapping("/createReaction")
+    @PostMapping
     public ReactionEntity createReaction(@RequestBody ReactionEntity reactionEntity) {
-        return service.saveReaction(reactionEntity);
+        return service.createReaction(reactionEntity);
     }
 
-    @GetMapping("/getAllReactions")
+    @GetMapping
     public List<ReactionEntity> getAllReactions() {
         return service.getAllReactions();
     }
 
-    @GetMapping("/getReaction/{reactionId}")
+    @GetMapping("/{reactionId}")
     public ReactionEntity getReactionById(@PathVariable int reactionId) {
         return service.getReactionById(reactionId);
     }
 
-    @PutMapping("/updateReactionType/{reactionId}")
+    @PutMapping("/{reactionId}")
     public ReactionEntity updateReactionType(@PathVariable int reactionId, @RequestBody String newReactionType) {
         return service.updateReactionType(reactionId, newReactionType);
-    }
-
-    @DeleteMapping("/deleteReaction/{reactionId}")
-    public String deleteReaction(@PathVariable int reactionId) {
-        service.deleteReaction(reactionId);
-        return "Reaction with ID " + reactionId + " has been deleted successfully.";
     }
 }
