@@ -10,22 +10,27 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "topic")
 public class TopicEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long topicID;
 
     private String title;
     private String content;
-    private int orderNumber;
+    private Integer orderNumber;
     private LocalDateTime lastUpdated;
+
+    public TopicEntity(String title, String content, Integer orderNumber, LocalDateTime lastUpdated) {
+        this.title = title;
+        this.content = content;
+        this.orderNumber = orderNumber;
+        this.lastUpdated = lastUpdated;
+    }
+
+    public TopicEntity() {
+    }
 
     public Long getTopicID() {
         return topicID;
-    }
-
-    public void setTopicID(Long topicID) {
-        this.topicID = topicID;
     }
 
     public String getTitle() {
@@ -44,11 +49,11 @@ public class TopicEntity {
         this.content = content;
     }
 
-    public int getOrderNumber() {
+    public Integer getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(int orderNumber) {
+    public void setOrderNumber(Integer orderNumber) {
         this.orderNumber = orderNumber;
     }
 

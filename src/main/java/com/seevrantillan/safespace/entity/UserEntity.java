@@ -7,35 +7,34 @@ import jakarta.persistence.*;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userID;
- 
-    @Column(length=32) 
+    private Long userID;
+
+    @Column(length = 32)
     private String username;
- 
-    @Column(length=128)
+
+    @Column(length = 128)
     private String password;
- 
-    @Column(length=128)
+
+    @Column(length = 128)
     private String email;
- 
-    @Column(length=32) 
+
+    @Column(length = 32)
     private String gender;
 
     @Column
-    private int age;
+    private Integer age;
 
-    @Column(length=32) 
+    @Column(length = 32)
     private String role;
 
-    @Column(length=32) 
+    @Column(length = 32)
     private String privacySettings;
 
     public UserEntity() {
     }
 
-    public UserEntity(int userID, String username, String password, String email, String gender, int age, String role,
+    public UserEntity(String username, String password, String email, String gender, int age, String role,
             String privacySettings) {
-        this.userID = userID;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -45,7 +44,7 @@ public class UserEntity {
         this.privacySettings = privacySettings;
     }
 
-    public int getUserID() {
+    public Long getUserID() {
         return userID;
     }
 
@@ -81,11 +80,11 @@ public class UserEntity {
         this.gender = gender;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -105,5 +104,4 @@ public class UserEntity {
         this.privacySettings = privacySettings;
     }
 
-    
 }

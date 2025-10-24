@@ -18,7 +18,7 @@ public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int commentId;
+    private Long commentId;
 
     @Column(nullable = false)
     private LocalDateTime date;
@@ -27,10 +27,10 @@ public class CommentEntity {
     private String content;
 
     @Column(nullable = false)
-    private int upvotes;
+    private Integer upvotes;
 
     @Column(nullable = false)
-    private int downvotes;
+    private Integer downvotes;
 
     // Each comment belongs to one user
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,18 +45,15 @@ public class CommentEntity {
     public CommentEntity() {
     }
 
-    public CommentEntity(int commentId, LocalDateTime date, String content, int upvotes, int downvotes,
-                         UserEntity user /* , PostEntity post*/) {
-        this.commentId = commentId;
+    public CommentEntity(LocalDateTime date, String content, Integer upvotes, Integer downvotes, UserEntity user) {
         this.date = date;
         this.content = content;
         this.upvotes = upvotes;
         this.downvotes = downvotes;
         this.user = user;
-        // this.post = post;
     }
 
-    public int getCommentId() {
+    public Long getCommentId() {
         return commentId;
     }
 
@@ -76,19 +73,19 @@ public class CommentEntity {
         this.content = content;
     }
 
-    public int getUpvotes() {
+    public Integer getUpvotes() {
         return upvotes;
     }
 
-    public void setUpvotes(int upvotes) {
+    public void setUpvotes(Integer upvotes) {
         this.upvotes = upvotes;
     }
 
-    public int getDownvotes() {
+    public Integer getDownvotes() {
         return downvotes;
     }
 
-    public void setDownvotes(int downvotes) {
+    public void setDownvotes(Integer downvotes) {
         this.downvotes = downvotes;
     }
 
@@ -99,12 +96,4 @@ public class CommentEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
-
-    // public PostEntity getPost() {
-    //     return post;
-    // }
-
-    // public void setPost(PostEntity post) {
-    //     this.post = post;
-    // }
 }

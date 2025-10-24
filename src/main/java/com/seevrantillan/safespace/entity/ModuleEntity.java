@@ -19,12 +19,17 @@ public class ModuleEntity {
     private String description;
     private LocalDateTime createdAt;
 
-    public Long getModuleID() {
-        return moduleID;
+    public ModuleEntity(String title, String description, LocalDateTime createdAt) {
+        this.title = title;
+        this.description = description;
+        this.createdAt = createdAt;
     }
 
-    public void setModuleID(Long moduleID) {
-        this.moduleID = moduleID;
+    public ModuleEntity() {
+    }
+
+    public Long getModuleID() {
+        return moduleID;
     }
 
     public String getTitle() {

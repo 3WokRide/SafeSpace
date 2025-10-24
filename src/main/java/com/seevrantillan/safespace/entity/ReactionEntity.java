@@ -16,13 +16,13 @@ public class ReactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int reactionId;
+    private Long reactionId;
 
     @Column(length = 50, nullable = false)
     private String targetType; // e.g., "Post" or "Comment"
 
     @Column(nullable = false)
-    private int targetID;
+    private Integer targetID;
 
     @Column(length = 50, nullable = false)
     private String reactionType; // e.g., "Like", "Love", "Haha"
@@ -41,21 +41,19 @@ public class ReactionEntity {
     @JoinColumn(name = "commentID", nullable = true)
     private CommentEntity comment;
 
-    public ReactionEntity() {
-    }
-
-    public ReactionEntity(int reactionId, String targetType, int targetID, String reactionType, 
-                          UserEntity user, /*PostEntity post,*/ CommentEntity comment) {
-        this.reactionId = reactionId;
+    public ReactionEntity(String targetType, Integer targetID, String reactionType, UserEntity user,
+            CommentEntity comment) {
         this.targetType = targetType;
         this.targetID = targetID;
         this.reactionType = reactionType;
         this.user = user;
-        // this.post = post;
         this.comment = comment;
     }
 
-    public int getReactionId() {
+    public ReactionEntity() {
+    }
+
+    public Long getReactionId() {
         return reactionId;
     }
 
@@ -67,11 +65,11 @@ public class ReactionEntity {
         this.targetType = targetType;
     }
 
-    public int getTargetID() {
+    public Integer getTargetID() {
         return targetID;
     }
 
-    public void setTargetID(int targetID) {
+    public void setTargetID(Integer targetID) {
         this.targetID = targetID;
     }
 
@@ -91,19 +89,11 @@ public class ReactionEntity {
         this.user = user;
     }
 
-    // public PostEntity getPost() {
-    //     return post;
-    // }
+    public CommentEntity getComment() {
+        return comment;
+    }
 
-    // public void setPost(PostEntity post) {
-    //     this.post = post;
-    // }
-
-    // public CommentEntity getComment() {
-    //     return comment;
-    // }
-
-    // public void setComment(CommentEntity comment) {
-    //     this.comment = comment;
-    // }
+    public void setComment(CommentEntity comment) {
+        this.comment = comment;
+    }   
 }
