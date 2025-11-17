@@ -1,49 +1,102 @@
 package com.seevrantillan.safespace.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.seevrantillan.safespace.entity.CommentEntity;
+import com.seevrantillan.safespace.entity.PostEntity;
 import com.seevrantillan.safespace.entity.ReactionEntity;
+import com.seevrantillan.safespace.entity.UserEntity;
+import com.seevrantillan.safespace.repository.CommentRepository;
+import com.seevrantillan.safespace.repository.PostRepository;
 import com.seevrantillan.safespace.repository.ReactionRepository;
+import com.seevrantillan.safespace.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReactionService {
 
-    @Autowired
-    private final ReactionRepository repo;
+    private final ReactionRepository repository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
-    public ReactionService(ReactionRepository repo) {
-        this.repo = repo;
+    public ReactionService(ReactionRepository repository, UserRepository userRepository,
+                           PostRepository postRepository, CommentRepository commentRepository) {
+        this.repository = repository;
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
-    public ReactionEntity saveReaction(ReactionEntity reaction) {
-        return repo.save(reaction);
+    // CREATE a reaction
+    public ReactionEntity createReaction(ReactionEntity reaction) {
+        return repository.save(reaction);
     }
 
-    public ReactionEntity updateReactionType(int reactionId, String newReactionType) {
-        ReactionEntity existingEntity = repo.findById(reactionId)
-                .orElseThrow(() -> new NoSuchElementException("Reaction not found with ID: " + reactionId));
+    // CREATE a reaction for a specific user + post or comment
+    public ReactionEntity createReactionForTarget(int userID, Integer postID, Integer commentID, String reactionType) {
+        UserEntity user = userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userID));
 
-        existingEntity.setReactionType(newReactionType);
-        return repo.save(existingEntity);
-    }
+        PostEntity post = null;
+        CommentEntity comment = null;
 
-    public List<ReactionEntity> getAllReactions() {
-        return repo.findAll();
-    }
-
-    public ReactionEntity getReactionById(int reactionId) {
-        return repo.findById(reactionId)
-                .orElseThrow(() -> new NoSuchElementException("Reaction not found with ID: " + reactionId));
-    }
-
-    public void deleteReaction(int reactionId) {
-        if (!repo.existsById(reactionId)) {
-            throw new NoSuchElementException("Reaction not found with ID: " + reactionId);
+        if (postID != null) {
+            post = postRepository.findById(postID.intValue())
+                    .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postID));
         }
-        repo.deleteById(reactionId);
+
+        if (commentID != null) {
+            comment = commentRepository.findById(commentID.intValue())
+                    .orElseThrow(() -> new RuntimeException("Comment not found with ID: " + commentID));
+        }
+
+        ReactionEntity reaction = new ReactionEntity();
+        reaction.setUser(user);
+        reaction.setPost(post);
+        reaction.setComment(comment);
+        reaction.setReactionType(reactionType);
+
+        return repository.save(reaction);
+    }
+
+    // GET reaction by ID
+    public ReactionEntity findReactionById(int id) {
+        return repository.findById(id).orElseThrow();
+    }
+
+    // GET all reactions
+    public List<ReactionEntity> findAllReactions() {
+        return repository.findAll();
+    }
+
+    // UPDATE reaction
+    @Transactional
+    public ReactionEntity updateReaction(int id, ReactionEntity updatedReaction) {
+        ReactionEntity existingReaction = repository.findById(id).orElseThrow();
+
+        existingReaction.setReactionType(updatedReaction.getReactionType());
+
+        if (updatedReaction.getUser() != null) {
+            existingReaction.setUser(updatedReaction.getUser());
+        }
+
+        if (updatedReaction.getPost() != null) {
+            existingReaction.setPost(updatedReaction.getPost());
+        }
+
+        if (updatedReaction.getComment() != null) {
+            existingReaction.setComment(updatedReaction.getComment());
+        }
+
+        return repository.save(existingReaction);
+    }
+
+    // DELETE reaction
+    public void deleteReaction(int id) {
+        repository.deleteById(id);
     }
 }

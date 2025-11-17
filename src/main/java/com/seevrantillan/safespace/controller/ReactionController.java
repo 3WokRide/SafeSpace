@@ -2,6 +2,8 @@ package com.seevrantillan.safespace.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seevrantillan.safespace.DTO.ReactionDTO;
 import com.seevrantillan.safespace.entity.ReactionEntity;
 import com.seevrantillan.safespace.service.ReactionService;
 
@@ -24,29 +27,50 @@ public class ReactionController {
         this.service = service;
     }
 
-    @PostMapping("/createReaction")
+    // --- CREATE reaction (Simple JSON body mapping to entity) ---
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ReactionEntity createReaction(@RequestBody ReactionEntity reactionEntity) {
-        return service.saveReaction(reactionEntity);
+        return service.createReaction(reactionEntity);
     }
 
-    @GetMapping("/getAllReactions")
-    public List<ReactionEntity> getAllReactions() {
-        return service.getAllReactions();
+    // --- CREATE reaction for a specific target (User + Post or Comment) ---
+    // Uses the ReactionDTO to read the JSON body for the target IDs.
+    @PostMapping(value = "/createForTarget", consumes = MediaType.APPLICATION_JSON_VALUE) 
+    public ReactionEntity createReactionForTarget(@RequestBody ReactionDTO targetDto) { 
+        return service.createReactionForTarget(
+            targetDto.getUserID(), 
+            targetDto.getPostID(), 
+            targetDto.getCommentID(), 
+            targetDto.getReactionType()
+        );
     }
 
-    @GetMapping("/getReaction/{reactionId}")
-    public ReactionEntity getReactionById(@PathVariable int reactionId) {
-        return service.getReactionById(reactionId);
+    // --- GET all reactions ---
+    @GetMapping
+    public List<ReactionEntity> findAllReactions() {
+        return service.findAllReactions();
     }
 
-    @PutMapping("/updateReactionType/{reactionId}")
-    public ReactionEntity updateReactionType(@PathVariable int reactionId, @RequestBody String newReactionType) {
-        return service.updateReactionType(reactionId, newReactionType);
+    // --- GET reaction by ID ---
+    @GetMapping("/{id}")
+    public ReactionEntity findReactionById(@PathVariable int id) {
+        // NOTE: Recommend using ResponseEntity.ok() here and handling 404 in the service.
+        return service.findReactionById(id); 
     }
 
-    @DeleteMapping("/deleteReaction/{reactionId}")
-    public String deleteReaction(@PathVariable int reactionId) {
-        service.deleteReaction(reactionId);
-        return "Reaction with ID " + reactionId + " has been deleted successfully.";
+    // --- UPDATE reaction ---
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ReactionEntity updateReaction(
+            @PathVariable int id,
+            @RequestBody ReactionEntity updatedReaction) {
+        return service.updateReaction(id, updatedReaction);
+    }
+
+    // --- DELETE reaction (Returning 204 No Content is REST standard) ---
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteReaction(@PathVariable int id) {
+        service.deleteReaction(id);
+        // Returns 204 NO_CONTENT status with an empty body.
+        return ResponseEntity.noContent().build();
     }
 }

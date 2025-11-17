@@ -1,18 +1,18 @@
 package com.seevrantillan.safespace.controller;
 
+import java.util.List;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seevrantillan.safespace.entity.ProgressEntity;
 import com.seevrantillan.safespace.service.ProgressService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/progresses")
@@ -23,7 +23,7 @@ public class ProgressController {
         this.service = service;
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ProgressEntity createProgress(@RequestBody ProgressEntity progress) {
         return service.createProgress(progress);
     }
@@ -38,7 +38,7 @@ public class ProgressController {
         return service.findProgressById(id);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ProgressEntity updateProgress(@PathVariable Long id, @RequestBody ProgressEntity entity) {
         return service.updateProgress(id, entity);
     }

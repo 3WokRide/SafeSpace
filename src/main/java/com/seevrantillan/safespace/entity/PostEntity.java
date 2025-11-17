@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+// Removed unused JsonIdentityInfo and ObjectIdGenerators imports
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,19 +17,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "comment")
-public class CommentEntity {
+@Table(name = "post")
+public class PostEntity {
 
     // --- Primary Key ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int commentId;
+    private int postID;
 
-    // --- Basic Comment Details ---
+    // --- Basic Post Details ---
     @Column(nullable = false)
     private LocalDateTime date;
 
-    @Column(length = 512, nullable = false)
+    @Column(length = 1024, nullable = false)
     private String content;
 
     @Column(nullable = false)
@@ -38,51 +38,52 @@ public class CommentEntity {
     @Column(nullable = false)
     private int downvotes = 0;
 
-    // --- Many-to-One Relationships (Parents) ---
-    // IMPORTANT: Add @JsonIgnore to prevent infinite recursion when serializing.
-    
+    @Column(nullable = false)
+    private boolean isAnonymous = false;
+
+    // --- Many-to-One Relationship (Post belongs to one User) ---
     @ManyToOne
-    @JoinColumn(name = "userID", nullable = false) // Explicitly name the foreign key
-    @JsonIgnore // <-- Added @JsonIgnore
+    @JoinColumn(name = "userID", nullable = false)
     private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "postID", nullable = false) // Explicitly name the foreign key
+    // --- One-to-Many Relationships (Children) ---
+    // IMPORTANT: Add @JsonIgnore to prevent infinite recursion during JSON serialization.
     @JsonIgnore // <-- Added @JsonIgnore
-    private PostEntity post;
+    @OneToMany(mappedBy = "post")
+    private List<CommentEntity> comments;
 
-    // --- One-to-Many Relationship (Children) ---
-    // IMPORTANT: Add @JsonIgnore here as well to prevent loops in the reverse direction.
     @JsonIgnore // <-- Added @JsonIgnore
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post")
     private List<ReactionEntity> reactions;
 
-    // --- Constructors ---
 
+    // --- Constructors ---
+    
     // No-args constructor is required by JPA and Jackson
-    public CommentEntity() {
+    public PostEntity() {
     }
 
-    // All-args constructor (modified to remove commentId as it's generated)
-    public CommentEntity(LocalDateTime date, String content, int upvotes, int downvotes,
-                         UserEntity user, PostEntity post) {
+    // All-args constructor (modified to remove postID as it's generated)
+    public PostEntity(LocalDateTime date, String content, int upvotes, int downvotes,
+                      boolean isAnonymous, UserEntity user) {
+        // Removed this.postID = postID;
         this.date = date;
         this.content = content;
         this.upvotes = upvotes;
         this.downvotes = downvotes;
+        this.isAnonymous = isAnonymous;
         this.user = user;
-        this.post = post;
     }
 
     // --- Getters and Setters ---
 
-    // Getter for commentId
-    public int getCommentId() {
-        return commentId;
+    // Getter for postID (No public setter for generated ID is generally preferred)
+    public int getPostID() {
+        return postID;
     }
 
-    public void setCommentId(int commentId) {
-        this.commentId = commentId;
+    public void setPostID(int postID) {
+        this.postID = postID;
     }
 
     public LocalDateTime getDate() {
@@ -117,6 +118,14 @@ public class CommentEntity {
         this.downvotes = downvotes;
     }
 
+    public boolean isAnonymous() {
+        return isAnonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        isAnonymous = anonymous;
+    }
+
     public UserEntity getUser() {
         return user;
     }
@@ -125,12 +134,12 @@ public class CommentEntity {
         this.user = user;
     }
 
-    public PostEntity getPost() {
-        return post;
+    public List<CommentEntity> getComments() {
+        return comments;
     }
 
-    public void setPost(PostEntity post) {
-        this.post = post;
+    public void setComments(List<CommentEntity> comments) {
+        this.comments = comments;
     }
 
     public List<ReactionEntity> getReactions() {

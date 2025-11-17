@@ -2,63 +2,96 @@ package com.seevrantillan.safespace.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.seevrantillan.safespace.entity.CommentEntity;
+import com.seevrantillan.safespace.entity.PostEntity;
+import com.seevrantillan.safespace.entity.UserEntity;
 import com.seevrantillan.safespace.repository.CommentRepository;
+import com.seevrantillan.safespace.repository.PostRepository;
+import com.seevrantillan.safespace.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class CommentService {
 
-    @Autowired
-    private final CommentRepository repo;
+    private final CommentRepository repository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
-    public CommentService(CommentRepository repo) {
-        this.repo = repo;
+    public CommentService(CommentRepository repository, UserRepository userRepository, PostRepository postRepository) {
+        this.repository = repository;
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
-    public CommentEntity saveComment(CommentEntity comment) {
-        // Automatically set the date when saving a new comment
+    // CREATE comment
+    public CommentEntity createComment(CommentEntity comment) {
         comment.setDate(LocalDateTime.now());
-        return repo.save(comment);
+        return repository.save(comment);
     }
 
-    public CommentEntity updateCommentContent(int commentId, String newContent) {
-        CommentEntity existingEntity = repo.findById(commentId)
-                .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
+    // CREATE comment for specific user + post
+    public CommentEntity createCommentForUserPost(int userID, int postID, String content) {
+        UserEntity user = userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userID));
+        PostEntity post = postRepository.findById((int) postID)
+                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + postID));
 
-        existingEntity.setContent(newContent);
-        existingEntity.setDate(LocalDateTime.now());
-        
-        return repo.save(existingEntity);
+        CommentEntity comment = new CommentEntity();
+        comment.setUser(user);
+        comment.setPost(post);
+        comment.setContent(content);
+        comment.setDate(LocalDateTime.now());
+        comment.setUpvotes(0);
+        comment.setDownvotes(0);
+
+        return repository.save(comment);
     }
 
-    public CommentEntity updateVotes(int commentId, int upvotes, int downvotes) {
-        CommentEntity existingEntity = repo.findById(commentId)
-                .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
 
-        existingEntity.setUpvotes(upvotes);
-        existingEntity.setDownvotes(downvotes);
-
-        return repo.save(existingEntity);
+    // READ comment by ID
+    public CommentEntity findCommentById(int id) {
+        return repository.findById(id).orElseThrow();
     }
 
-    public List<CommentEntity> getAllComments() {
-        return repo.findAll();
+    // READ all comments
+    public List<CommentEntity> findAllComments() {
+        return repository.findAll();
     }
 
-    public CommentEntity getCommentById(int commentId) {
-        return repo.findById(commentId)
-                .orElseThrow(() -> new NoSuchElementException("Comment not found with ID: " + commentId));
-    }
+    // UPDATE comment content and user/post association
+    @Transactional
+    public CommentEntity updateComment(int id, CommentEntity updatedComment) {
+        CommentEntity existingComment = repository.findById(id).orElseThrow();
+        existingComment.setContent(updatedComment.getContent());
+        existingComment.setUpvotes(updatedComment.getUpvotes());
+        existingComment.setDownvotes(updatedComment.getDownvotes());
+        existingComment.setDate(LocalDateTime.now());
 
-    public void deleteComment(int commentId) {
-        if (!repo.existsById(commentId)) {
-            throw new NoSuchElementException("Comment not found with ID: " + commentId);
+        if (updatedComment.getUser() != null) {
+            existingComment.setUser(updatedComment.getUser());
         }
-        repo.deleteById(commentId);
+        if (updatedComment.getPost() != null) {
+            existingComment.setPost(updatedComment.getPost());
+        }
+
+        return repository.save(existingComment);
+    }
+
+    // UPDATE only votes
+    @Transactional
+    public CommentEntity updateVotes(int id, int upvotes, int downvotes) {
+        CommentEntity existingComment = repository.findById(id).orElseThrow();
+        existingComment.setUpvotes(upvotes);
+        existingComment.setDownvotes(downvotes);
+        return repository.save(existingComment);
+    }
+
+    // DELETE comment
+    public void deleteComment(int id) {
+        repository.deleteById(id);
     }
 }

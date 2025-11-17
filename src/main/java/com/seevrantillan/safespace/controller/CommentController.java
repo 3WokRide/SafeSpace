@@ -2,6 +2,7 @@ package com.seevrantillan.safespace.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seevrantillan.safespace.DTO.CommentDTO;
 import com.seevrantillan.safespace.entity.CommentEntity;
 import com.seevrantillan.safespace.service.CommentService;
 
@@ -25,36 +27,37 @@ public class CommentController {
         this.service = service;
     }
 
-    @PostMapping("/createComment")
-    public CommentEntity createComment(@RequestBody CommentEntity commentEntity) {
-        return service.saveComment(commentEntity);
+@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+public CommentEntity createComment(@RequestBody CommentDTO dto) {
+    return service.createCommentForUserPost(dto.getUserID(), dto.getPostID(), dto.getContent());
+}
+
+    @GetMapping()
+    public List<CommentEntity> findAllComments() {
+        return service.findAllComments();
     }
 
-    @GetMapping("/getAllComments")
-    public List<CommentEntity> getAllComments() {
-        return service.getAllComments();
+    @GetMapping("/{id}")
+    public CommentEntity findCommentById(@PathVariable int id) {
+        return service.findCommentById(id);
     }
 
-    @GetMapping("/getComment/{commentId}")
-    public CommentEntity getCommentById(@PathVariable int commentId) {
-        return service.getCommentById(commentId);
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CommentEntity updateComment(@PathVariable int id, @RequestBody CommentEntity updatedComment) {
+        return service.updateComment(id, updatedComment);
     }
 
-    @PutMapping("/updateCommentContent/{commentId}")
-    public CommentEntity updateCommentContent(@PathVariable int commentId, @RequestBody String newContent) {
-        return service.updateCommentContent(commentId, newContent);
+    @PutMapping("/{id}/votes")
+    public CommentEntity updateVotes(
+            @PathVariable int id,
+            @RequestParam int upvotes,
+            @RequestParam int downvotes) {
+        return service.updateVotes(id, upvotes, downvotes);
     }
 
-    @PutMapping("/updateVotes/{commentId}")
-    public CommentEntity updateVotes(@PathVariable int commentId, 
-                                     @RequestParam int upvotes, 
-                                     @RequestParam int downvotes) {
-        return service.updateVotes(commentId, upvotes, downvotes);
-    }
-
-    @DeleteMapping("/deleteComment/{commentId}")
-    public String deleteComment(@PathVariable int commentId) {
-        service.deleteComment(commentId);
-        return "Comment with ID " + commentId + " has been deleted successfully.";
+    @DeleteMapping("/{id}")
+    public String deleteComment(@PathVariable int id) {
+        service.deleteComment(id);
+        return "Comment with ID " + id + " has been deleted successfully.";
     }
 }

@@ -1,12 +1,13 @@
 package com.seevrantillan.safespace.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumn; // New import
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -14,65 +15,56 @@ import jakarta.persistence.Table;
 @Table(name = "reaction")
 public class ReactionEntity {
 
+    // --- Primary Key ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reactionId;
 
     @Column(length = 50, nullable = false)
-    private String targetType; // e.g., "Post" or "Comment"
+    private String reactionType; 
 
-    @Column(nullable = false)
-    private int targetID;
+    // --- Relationships (Many-to-One) ---
+    // CRITICAL FIX: Use @JoinColumn to match the database column names (e.g., 'userid').
+    // Use @JsonIgnore to prevent infinite recursion during JSON serialization.
 
-    @Column(length = 50, nullable = false)
-    private String reactionType; // e.g., "Like", "Love", "Haha"
-
-    // Each reaction belongs to one user
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userID", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "userid", nullable = false) // Assumes database column is named 'userid'
+    @JsonIgnore 
     private UserEntity user;
 
-    // // A reaction can target either a Post or Comment
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "postID", nullable = true)
-    // private PostEntity post;
+    @ManyToOne
+    @JoinColumn(name = "postid") // Assumes database column is named 'postid'
+    @JsonIgnore 
+    private PostEntity post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commentID", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "commentid") // Assumes database column is named 'commentid'
+    @JsonIgnore 
     private CommentEntity comment;
 
+
+    // --- Constructors ---
+    
+    // No-args constructor required by JPA and Jackson
     public ReactionEntity() {
     }
 
-    public ReactionEntity(int reactionId, String targetType, int targetID, String reactionType, 
-                          UserEntity user, /*PostEntity post,*/ CommentEntity comment) {
-        this.reactionId = reactionId;
-        this.targetType = targetType;
-        this.targetID = targetID;
+    // All-args constructor for service creation (excluding generated ID)
+    public ReactionEntity(String reactionType, UserEntity user, PostEntity post, CommentEntity comment) {
         this.reactionType = reactionType;
         this.user = user;
-        // this.post = post;
+        this.post = post;
         this.comment = comment;
     }
+
+    // --- Getters and Setters ---
 
     public int getReactionId() {
         return reactionId;
     }
-
-    public String getTargetType() {
-        return targetType;
-    }
-
-    public void setTargetType(String targetType) {
-        this.targetType = targetType;
-    }
-
-    public int getTargetID() {
-        return targetID;
-    }
-
-    public void setTargetID(int targetID) {
-        this.targetID = targetID;
+    
+    public void setReactionId(int reactionId) {
+        this.reactionId = reactionId;
     }
 
     public String getReactionType() {
@@ -91,19 +83,19 @@ public class ReactionEntity {
         this.user = user;
     }
 
-    // public PostEntity getPost() {
-    //     return post;
-    // }
+    public PostEntity getPost() {
+        return post;
+    }
 
-    // public void setPost(PostEntity post) {
-    //     this.post = post;
-    // }
+    public void setPost(PostEntity post) {
+        this.post = post;
+    }
 
-    // public CommentEntity getComment() {
-    //     return comment;
-    // }
+    public CommentEntity getComment() {
+        return comment;
+    }
 
-    // public void setComment(CommentEntity comment) {
-    //     this.comment = comment;
-    // }
+    public void setComment(CommentEntity comment) {
+        this.comment = comment;
+    }
 }
